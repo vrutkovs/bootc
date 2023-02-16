@@ -233,9 +233,11 @@ async fn prepare_for_write() -> Result<()> {
         );
     }
     ensure_self_unshared_mount_namespace().await?;
-    if crate::lsm::selinux_enabled()? {
-        crate::lsm::selinux_ensure_install()?;
-    }
+    // if std::env::var_os("BOOTC_RHEL8_HACK").is_none() {
+    //     if crate::lsm::selinux_enabled()? {
+    //         crate::lsm::selinux_ensure_install()?;
+    //     }
+    // }
     Ok(())
 }
 

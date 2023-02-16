@@ -624,11 +624,13 @@ async fn prepare_install(
     let override_disable_selinux =
         reexecute_self_for_selinux_if_needed(&srcdata, config_opts.disable_selinux)?;
 
-    // Create our global (read-only) state which gets wrapped in an Arc
-    // so we can pass it to worker threads too. Right now this just
-    // combines our command line options along with some bind mounts from the host.
-    // Overmount /var/tmp with the host's, so we can use it to share state
-    bind_mount_from_host("/var/tmp", "/var/tmp")?;
+    if std::env::var_os("BOOTC_RHEL8_HACK").is_none() {
+        // Create our global (read-only) state which gets wrapped in an Arc
+        // so we can pass it to worker threads too. Right now this just
+        // combines our command line options along with some bind mounts from the host.
+        // Overmount /var/tmp with the host's, so we can use it to share state
+        bind_mount_from_host("/var/tmp", "/var/tmp")?;
+    }
     let state = Arc::new(State {
         override_disable_selinux,
         source_imageref,
